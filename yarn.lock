@@ -558,6 +558,11 @@ react-dom@18.1.0:
     loose-envify "^1.1.0"
     scheduler "^0.22.0"
 
+react-simple-typewriter@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/react-simple-typewriter/-/react-simple-typewriter-4.0.5.tgz#404a1e12ccb97ad7813b48f8e58813117fe8e3fb"
+  integrity sha512-2CmVpD1kTifRE8gixr2z+1aYS136ZbAC/UATNzvkzl4tSiThT/ATXH4rOGVwWLTlOWCVnSewObXo/kJlV2HMxw==
+
 react@18.1.0:
   version "18.1.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.1.0.tgz#6f8620382decb17fdc5cc223a115e2adbf104890"

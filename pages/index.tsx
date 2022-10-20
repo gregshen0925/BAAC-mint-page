@@ -1,84 +1,122 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import Image from 'next/image'
+import { Cursor, useTypewriter } from "react-simple-typewriter"
+import React, { useEffect, useState } from 'react';
+import BAAC from '../src/BAAC.jpg'
+
 
 const Home: NextPage = () => {
+  const [sender, setSender] = useState(null)
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+  const [connenctButtonText, setConnenctButtonText] = useState('Connect')
+  const [mintAmount, setmintAmount] = useState(NaN)
+  // const cmAddress = data.candymachine.cmPublicKey;
+  // const coverImg = data.collection.collectionCover;
+  // const collectionName = data.collection.collectionName;
+
+  const [text, count] = useTypewriter({
+    words: [
+      `Welcome to BAAC mint page`,
+      "Pioneer of Aptos",
+    ],
+    // loop: true,
+    delaySpeed: 2000,
+  })
+
+  useEffect(() => {
+    connectWallet()
+  }, [])
+
+
+  const connectWallet = async () => {
+    if ("martian" in window) {
+      console.log("connecting wallet")
+      const response = await window.martian.connect();
+      const sender = response.address
+      console.log(sender);
+      setSender(sender)
+      const isConnected = await window.martian.isConnected()
+      if (isConnected) {
+        setIsWalletConnected(true)
+      }
+      console.log("wallet connected");
+      setConnenctButtonText('Connected');
+      return;
+    }
+    window.open("https://www.martianwallet.xyz/", "_blank");
+  };
+
+  const mint = async () => {
+    console.log(sender);
+    // Generate a transaction
+    const payload = {
+      type: "entry_function_payload",
+      function: "0x5ac985f1fe40c5121eb33699952ce8a79b1d1cb7438709dbd1da8e840a04fbee::candy_machine_v2::mint_tokens",
+      type_arguments: [],
+      arguments: [
+        // cmAddress,
+        // collectionName,
+        "0x30957ce23fa2e31cb10766e27e950cf8aa2245e3273f2e18b2ef84ad4870cd9e",
+        "TestCollection101",
+        mintAmount,
+      ]
+    };
+    const transaction = await window.martian.generateTransaction(sender, payload);
+    const txnHash = await window.martian.signAndSubmitTransaction(transaction);
+    console.log(txnHash);
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setmintAmount(e.target.valueAsNumber)
+  };
+
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+    <div className="h-screen flex flex-col space-y-10 justify-center bg-black
+    text-center overflow-hidden">
+      <title>Bored Ape Aptos Club Mint</title>
+      <h1 className='text-white font-bold text-3xl md:text-5xl '>Bored Ape Aptos Club</h1>
+      <div>
+        <div className='relative h-40 w-40 md:h-60 md:w-60 mx-auto'>
+          <Image
+            src={BAAC}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+            alt=""
+          />
         </div>
-      </main>
+        <div className='z-20 py-5'>
+          <h2 className="text-sm uppercase text-gray-500 pb-2 tracking-[5px] md:tracking-[5px]">
+            &nbsp;2.5APT Per BAAC
+          </h2>
+          <h1 className="text-3xl md:text-6xl font-semibold px-10 text-[#447de6]">
+            <span className="mr-3">{text}</span>
+            <Cursor cursorColor="#447de6" />
+          </h1>
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+          <div className="pt-5">
+            <div>
+              {(!sender) && <button onClick={connectWallet}
+                className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full py-2 px-3 font-semibold items-right"
+              >Connect Wallet</button>}
+
+              {(sender) && <div className=''>
+                <input
+                  type="number"
+                  onChange={handleChange}
+                  value={mintAmount}
+                  placeholder='Amount to mint'
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-50 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 items-center"
+                />
+                <button onClick={mint}
+                  className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg px-4 py-2 font-semibold"
+                >Mint</button>
+              </div>}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
