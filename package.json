@@ -9,6 +9,7 @@
     "next": "latest",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-hot-toast": "^2.4.0",
     "react-simple-typewriter": "^4.0.5"
   },
   "devDependencies": {
